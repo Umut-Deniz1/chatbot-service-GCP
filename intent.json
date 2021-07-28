@@ -1,0 +1,14 @@
+
+{
+    "intents": [
+      {
+        "tag": "selam",
+        "patterns": ["merhaba","naber","selamlar"],
+        "responses": [
+          "Merhaba.","Selamlar","Merhaba nasılsını?"
+        ]
+      }
+  
+    ]
+  }
+  
