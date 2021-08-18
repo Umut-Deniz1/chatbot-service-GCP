@@ -17,9 +17,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 lemmatizer = WordNetLemmatizer()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credential.json"
-storage_client = storage.Client("[project_name]")
-bucket = storage_client.get_bucket('bucket_name')
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "betatests-bad323259eb9.json"
+storage_client = storage.Client("[BetaTests]")
+bucket = storage_client.get_bucket('betatests.appspot.com')
 nltk.download('punkt')
 nltk.download('wordnet')
 
@@ -36,7 +36,9 @@ def run(request):
   r_classes = str(request.args.get("c")) + ".pkl"
   r_model = str(request.args.get("m")) + ".h5"
 
-  # fecth pickle and model files from google cloud storage
+  blob = bucket.blob("chatbot/{}".format(r_intents))
+  blob.download_to_filename("/tmp/{}".format(r_intents))
+
   blob = bucket.blob("chatbot/{}".format(r_words))
   blob.download_to_filename("/tmp/{}".format(r_words))
 
@@ -46,7 +48,7 @@ def run(request):
   blob3 = bucket.blob("chatbot/{}".format(r_model))
   blob3.download_to_filename("/tmp/{}".format(r_model))  
 
-  intents = json.loads(open(r_intents,encoding='utf-8').read())
+  intents = json.loads(open("/tmp/{}".format(r_intents),encoding='utf-8').read())
   words = pickle.load(open("/tmp/{}".format(r_words),  "rb"))
   classes = pickle.load(open("/tmp/{}".format(r_classes), "rb"))
   model = load_model("/tmp/{}".format(r_model))
@@ -86,6 +88,8 @@ def run(request):
       if i["tag"] == tag:
         result = random.choice(i["responses"])
         break
+      else:
+        result = "0"
     return result
 
   ints = predict_class(message)
